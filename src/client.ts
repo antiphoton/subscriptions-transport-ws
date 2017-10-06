@@ -319,6 +319,10 @@ export class SubscriptionClient {
     return this.on('reconnecting', callback, context);
   }
 
+  public onDelay(callback: ListenerFn, context?: any): Function {
+    return this.on('delay', callback, context);
+  }
+
   public unsubscribe(opId: string) {
     if (this.operations[opId]) {
       delete this.operations[opId];
@@ -552,6 +556,7 @@ export class SubscriptionClient {
     this.clearTryReconnectTimeout();
 
     const delay = this.backoff.duration();
+    this.eventEmitter.emit('delay', delay);
     this.tryReconnectTimeoutId = setTimeout(() => {
       this.connect();
     }, delay);
